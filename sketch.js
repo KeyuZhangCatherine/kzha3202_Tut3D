@@ -308,9 +308,16 @@ function mouseClicked() {
 }
 
 function windowResized() {
-  // Add the resize function for the window size changing
+  //Add the resize function for the window size changing
   resizeCanvas(windowWidth, windowHeight);
-  // Draw the pictures again
-  setup(); 
+  
+  //Recalculate block positions to ensure they fit the new window size
+  let yPosArray = calculatePositions([10, 50, 120, 150, 220, 250, 280, 340, 440], windowHeight);
+  let xPosArray = calculatePositions([10, 30, 70, 140, 300, 330, 420, 440, 480, 500], windowWidth);
+
+  //Update the positions of the streets by redrawing the
+  //horizontal and vertical streets to fit the new layout
+  horizontalStreets(yPosArray);
+  verticalStreets(xPosArray);
 }
 
