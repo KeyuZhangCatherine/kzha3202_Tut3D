@@ -8,6 +8,9 @@ function preload() {
   song = loadSound("assets/Santa Jazz.mp3");
 }
 
+let horizontalBlocks = [];
+let verticalBlocks = [];
+
 //Defines the initial setup function for the sketch
 function setup() {
 
@@ -23,9 +26,9 @@ function setup() {
   let xPosArray = calculatePositions([10, 30, 70, 140, 300, 330, 420, 440, 480, 500], windowWidth);
   
   //Creates horizontal streets on the canvas
-  horizontalStreets(yPosArray);
+  horizontalBlocks = horizontalStreets(yPosArray);
   //Creates vertical streets on the canvas
-  verticalStreets(xPosArray);
+  verticalBlocks = verticalStreets(xPosArray);
 
   //Creates blue colored blocks at specific positions
   createBlock(windowWidth * 0.1, windowHeight * 0.16, windowWidth * 0.06, windowHeight * 0.06, color(0, 0, 255));
@@ -58,6 +61,34 @@ function setup() {
   song.play();
 }
 
+//Define a 'Block' class to represent a rectangular block on the canvas
+class Block {
+
+  //Constructor function is called when a new instance of 'Block' is created
+  constructor(x, y, w, h, c) {
+    this.x = x; //The x-coordinate of the position
+    this.y = y; //The y-coordinate of the position
+    this.w = w; //The width of the block
+    this.h = h; //The height of the block
+    this.c = c; //The colour of the block
+  }
+  //Update the height of the block
+  updateHeight(newHeight) {
+    this.h = newHeight; //Set the height of the block to the new value
+  }
+
+  //Update the width of the block
+  updateWidth(newWidth) {
+    this.w = newWidth; //Set the width of the block to the new value
+  }
+
+  //Draw the block on the canvas
+  draw() {
+    fill(this.c); //Set the colour to fill
+    rect(this.x, this.y, this.w, this.h); //Draw the rectangle with given conditions
+  }
+}
+
 //Function to calculate and adjust positions based on the canvas size
 function calculatePositions(positionArray, canvasSize) {
   //Initializes an empty array for adjusted positions
@@ -84,6 +115,8 @@ function createBlock(x, y, w, h, c) {
 
 //Function to create horizontal streets using the yPosArray
 function horizontalStreets(yPosArray) {
+  //Initialize an array to store the blocks created
+  let blocks = [];
   //For loop through each y position in the array
   for (let yPos of yPosArray) {
     //Creates a row of blocks across the width of the canvas
@@ -93,13 +126,17 @@ function horizontalStreets(yPosArray) {
       //Get a color based on the random number
       let c = colourMap(num);
       //Create a block with the determined color at the current position
-      createBlock(i, yPos, 20, 20, c);
+      blocks.push(new Block(i, yPos, 20, 20, c));
     }
   }
+  //Return the array of Block created
+  return blocks;
 }
 
 //Function to create vertical streets using the xPosArray
 function verticalStreets(xPosArray) {
+  //Initialize an array to store the blocks created
+  let blocks = [];
   //For loop through each x position in the array
   for (let xPos of xPosArray) {
     //Creates a row of blocks across the height of the canvas
@@ -109,9 +146,11 @@ function verticalStreets(xPosArray) {
       //Get a color based on the random number
       let c = colourMap(num);
       //Create a block with the determined color at the current position
-      createBlock(xPos, i, 20, 20, c);
+      blocks.push(new Block(xPos, i, 20, 20, c));
     }
   }
+  //Return the array of Block created
+  return blocks;
 }
 
 //Function to map a number to a specific color
@@ -133,14 +172,62 @@ function colourMap(num) {
 }
 
 function draw() {
+  //Set the background colour for each frame to avoid overlapping
+  background(229, 228, 240);
   //Get the current amplitude level of the song
   let level = amplitude.getLevel();
+  //Analyze the frequency spectrum of the song
+  let spectrum = fft.analyze();
+  //Map the amplitude level to a height for visual representation
+  //Make the number negative so that the height of the horizontal street changes at the top
+  let newHeight = map(level, 0, 1, -20, -200);
+  //Map the amplitude level to a new width for visual representation 
+  let newWidth = map(level, 0, 1, 20, 200); 
+
+  //For loop through each block in the horizontalBlocks array
+  for (let block of horizontalBlocks) {
+    //Update the height based on the current amplitude level
+    block.updateHeight(newHeight);
+    //Draw the block with the updated dimensions
+    block.draw();
+  }
+
+  //For loop through each block in the verticalBlocks array
+  for (let block of verticalBlocks) {
+    //Update the width based on the current amplitude level
+    block.updateWidth(newWidth);
+    //Draw the block with the updated dimensions
+    block.draw();
+  }
+
+  //Creates color gradient (yelow to blue) based on the volume level
+  //Gradually decrease the red and green colour, increase the blue colour with increasing volume level to get yellow to blue.
+  let levelColor = color(map(level, 0, 1, 255, 0), map(level, 0, 1, 255, 0), map(level, 0, 1, 0, 255)); 
+  
+  //Get the energy in the bass frequencies of the song
+  let bassEnergy = fft.getEnergy("bass");
+  //Creates color gradient (yellow to orange) based on the bass energy increases
+  //Gradually decrease the green colour with increasing bass energy to get yellow to orange.
+  let bassColor = color(255, map(bassEnergy, 0, 255, 255, 140), 0);
+  
+  //For loop through each block in the horizontalBlocks array again
+  for (let block of horizontalBlocks) {
+    //Set the colour of blocks based on the volume level color mapping
+    block.c = levelColor;
+    //Draw the block with the updated color 
+    block.draw();
+  }
+  
+  //For loop through each block in the verticalBlocks array again
+  for (let block of verticalBlocks) {
+    //Set the colour of blocks based on the bass energy color mapping
+    block.c = bassColor; 
+    //Draw the block with the updated color 
+    block.draw();
+  }                     
 
   //Map the amplitude level to a block size for the blue blocks
   let blueBlockSize = map(level, 0, 1, 10, 150);
-
-  //Analyze the frequency spectrum of the song
-  let spectrum = fft.analyze();
 
   //Map the 50th frequency band to a block size for the red blocks
   let redBlockSize = map(spectrum[50], 0, 255, 10, 150);
