@@ -200,7 +200,7 @@ function draw() {
     block.draw();
   }
 
-  //Creates color gradient (yelow to blue) based on the volume level
+  //Creates color gradient (yellow to blue) based on the volume level
   //Gradually decrease the red and green colour, increase the blue colour with increasing volume level to get yellow to blue.
   let levelColor = color(map(level, 0, 1, 255, 0), map(level, 0, 1, 255, 0), map(level, 0, 1, 0, 255)); 
   
@@ -210,24 +210,11 @@ function draw() {
   //Gradually decrease the green colour with increasing bass energy to get yellow to orange.
   let bassColor = color(255, map(bassEnergy, 0, 255, 255, 140), 0);
   
-  //For loop through each block in the horizontalBlocks array again
-  for (let block of horizontalBlocks) {
-    //Set the colour of blocks based on the volume level color mapping
-    block.c = levelColor;
-    //Draw the block with the updated color 
-    block.draw();
-  }
-  
-  //For loop through each block in the verticalBlocks array again
-  for (let block of verticalBlocks) {
-    //Set the colour of blocks based on the bass energy color mapping
-    block.c = bassColor; 
-    //Draw the block with the updated color 
-    block.draw();
-  }                     
+                    
+                    
 
   //Map the amplitude level to a block size for the blue blocks
-  let blueBlockSize = map(level, 0, 1, 10, 150);
+  let blueBlockSize = map(level, 0, 1, 10, 250);
 
   //Map the 50th frequency band to a block size for the red blocks
   let redBlockSize = map(spectrum[50], 0, 255, 10, 150);
@@ -246,7 +233,7 @@ function draw() {
     windowHeight * 0.16, // Y position
     blueBlockSize, // Width of the rectangle
     blueBlockSize, // Height of the rectangle
-    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 100) // Dynamic blue color with transparency
+    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 200) // Dynamic blue color with transparency
   );
 
   createBlockWithAnimation(
@@ -254,7 +241,7 @@ function draw() {
     windowHeight * 0.7, // Y position
     blueBlockSize, // Width of the rectangle
     blueBlockSize, // Height of the rectangle
-    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 100) // Dynamic blue color with transparency
+    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 200) // Dynamic blue color with transparency
   );
 
   createBlockWithAnimation(
@@ -262,7 +249,7 @@ function draw() {
     windowHeight * 0.52, // Y position
     blueBlockSize, // Width of the rectangle
     blueBlockSize, // Height of the rectangle
-    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 100) // Dynamic blue color with transparency
+    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 200) // Dynamic blue color with transparency
   );
 
   createBlockWithAnimation(
@@ -270,7 +257,7 @@ function draw() {
     windowHeight * 0.32, // Y position
     blueBlockSize, // Width of the rectangle
     blueBlockSize, // Height of the rectangle
-    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 100) // Dynamic blue color with transparency
+    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 200) // Dynamic blue color with transparency
   );
 
   createBlockWithAnimation(
@@ -278,7 +265,7 @@ function draw() {
     windowHeight * 0.7, // Y position
     blueBlockSize, // Width of the rectangle
     blueBlockSize, // Height of the rectangle
-    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 100) // Dynamic blue color with transparency
+    color(0, 0, map(blueBlockSize, 10, 100, 50, 255), 200) // Dynamic blue color with transparency
   );
 
   // Create animated red rectangles with varying positions and dynamic colors
