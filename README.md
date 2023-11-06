@@ -8,4 +8,5 @@ The rotation is added to have more visual effect.
 Add changing height and changing colour following the spectrum information into the background horizontal and vertical streets. Use the energy in the bass frequency.
 Add the navigation “Click to play/pause the music” to help users get access to how to start.
 
+<img width="1466" alt="Audio-Screenshot" src="https://github.com/KeyuZhangCatherine/kzha3202_Tut3D/assets/147043289/e49735cb-12cd-44de-8a83-f1fbe2cecc58">
 
