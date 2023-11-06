@@ -112,7 +112,6 @@ function createBlock(x, y, w, h, c) {
   rect(x, y, w, h);
 }
 
-
 //Function to create horizontal streets using the yPosArray
 function horizontalStreets(yPosArray) {
   //Initialize an array to store the blocks created
@@ -172,23 +171,43 @@ function colourMap(num) {
 }
 
 function draw() {
-  //Set the background colour for each frame to avoid overlapping
-  background(229, 228, 240);
   //Get the current amplitude level of the song
   let level = amplitude.getLevel();
   //Analyze the frequency spectrum of the song
   let spectrum = fft.analyze();
+
+  //Use the amplitude level to interpolate between grey and blue for the background
+  //Grey(229, 228, 240) to blue(0, 0, 255)
+  let bgColor = color(map(level, 0, 1, 229, 0), map(level, 0, 1, 228, 0), map(level, 0, 1, 240, 255));
+
+  // Set the background color based on the music for each frame to avoid overlapping
+  background(bgColor);
+
   //Map the amplitude level to a height for visual representation
   //Make the number negative so that the height of the horizontal street changes at the top
-  let newHeight = map(level, 0, 1, -20, -200);
+  let newHeight = map(level, 0, 1, -20, -120);
   //Map the amplitude level to a new width for visual representation 
-  let newWidth = map(level, 0, 1, 20, 200); 
+  let newWidth = map(level, 0, 1, 20, 120); 
 
   //For loop through each block in the horizontalBlocks array
   for (let block of horizontalBlocks) {
     //Update the height based on the current amplitude level
     block.updateHeight(newHeight);
     //Draw the block with the updated dimensions
+    block.draw();
+  }
+  
+  //Get the energy in the bass frequencies of the song
+  let bassEnergy = fft.getEnergy("bass");
+  //Creates color gradient (yellow to orange) based on the bass energy increases
+  //Gradually decrease the green colour with increasing bass energy to get yellow to orange.
+  let bassColor = color(255, map(bassEnergy, 0, 255, 255, 180), 0);
+  
+  //For loop through each block in the horizontalBlocks array again
+  for (let block of horizontalBlocks) {
+    //Set the colour of blocks based on the bass energy color mapping
+    block.c = bassColor; 
+    //Draw the block with the updated color 
     block.draw();
   }
 
@@ -198,21 +217,8 @@ function draw() {
     block.updateWidth(newWidth);
     //Draw the block with the updated dimensions
     block.draw();
-  }
-
-  //Creates color gradient (yellow to blue) based on the volume level
-  //Gradually decrease the red and green colour, increase the blue colour with increasing volume level to get yellow to blue.
-  let levelColor = color(map(level, 0, 1, 255, 0), map(level, 0, 1, 255, 0), map(level, 0, 1, 0, 255)); 
+  }   
   
-  //Get the energy in the bass frequencies of the song
-  let bassEnergy = fft.getEnergy("bass");
-  //Creates color gradient (yellow to orange) based on the bass energy increases
-  //Gradually decrease the green colour with increasing bass energy to get yellow to orange.
-  let bassColor = color(255, map(bassEnergy, 0, 255, 255, 140), 0);
-  
-                    
-                    
-
   //Map the amplitude level to a block size for the blue blocks
   let blueBlockSize = map(level, 0, 1, 10, 250);
 
@@ -352,6 +358,16 @@ function draw() {
 
   //Pop the current drawing style 
   pop();
+
+  //Set the stroke and fill color for the text
+  stroke(0);
+  fill(138,0,0);
+  //Set the text size
+  textSize(25);
+  //Align the text
+  textAlign(CENTER, BOTTOM);
+  //Display the navigation text at the center bottom of the canvas
+  text("Click screen to play/pause the music", width / 2, height * 4/5);
 }
 
 //Define a function to create rotation blocks
